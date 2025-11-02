@@ -47,8 +47,17 @@ EOF
 
 ### Default Keymaps
 
+By default:
 - `<leader>m{char}` - Set a buffer mark for the current buffer
 - `<leader>'{char}` - Jump to the buffer associated with the mark
+
+With `swap_native_mark_keymaps = true`:
+- `m{char}` - Set a buffer mark for the current buffer
+- `'{char}` - Jump to the buffer associated with the mark
+- `<leader>m{char}` - Set a native vim mark
+- `<leader>'{char}` - Jump to a native vim mark
+This option allows for a more ergonomic workflow if you find yourself using buf marks more than
+native vim marks while still allowing for native vim marks to be set in an intuitive way.
 
 ### Example Workflow
 
@@ -73,8 +82,26 @@ Unlike vim's traditional marks which remember positions within a file, buffer ma
 require("buf_marker").setup({
   -- Set to false to disable default keymaps
   keymaps = true,
+
+  -- Set to true to swap native mark keymaps with buffer mark keymaps
+  -- (only works when keymaps = true)
+  swap_native_mark_keymaps = false,
 })
 ```
+
+#### Swapping Native Mark Keymaps
+
+If you prefer to use `m` and `'` for buffer marks (instead of `<leader>m` and `<leader>'`), you can enable the swap:
+
+```lua
+require("buf_marker").setup({
+  swap_native_mark_keymaps = true,
+})
+```
+
+This will map:
+- `m{char}` and `'{char}` to buffer marks
+- `<leader>m{char}` and `<leader>'{char}` to native vim marks
 
 ### Custom Keymaps
 
@@ -108,6 +135,7 @@ Initialize the plugin with optional configuration.
 **Parameters:**
 - `opts` (table, optional): Configuration options
   - `keymaps` (boolean): Enable/disable default keymaps (default: `true`)
+  - `swap_native_mark_keymaps` (boolean): Swap buffer mark and native mark keymaps (default: `false`, only works when `keymaps = true`)
 
 ### `set_mark(char)`
 

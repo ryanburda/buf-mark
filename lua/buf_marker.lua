@@ -76,15 +76,48 @@ T.setup = function(opts)
 
   -- Setup keymaps if not disabled
   if opts.keymaps ~= false then
-    vim.keymap.set('n', '<leader>m', function()
-      local char = vim.fn.getcharstr()
-      T.set_mark(char)
-    end, { desc = 'Set buffer mark' })
+    if opts.swap_native_mark_keymaps then
+      -- Use m and ' for buffer marks
+      vim.keymap.set('n', 'm', function()
+        local char = vim.fn.getcharstr()
+        T.set_mark(char)
+      end, { desc = 'Set buffer mark' })
 
-    vim.keymap.set('n', "<leader>'", function()
-      local char = vim.fn.getcharstr()
-      T.goto_mark(char)
-    end, { desc = 'Go to buffer mark' })
+      vim.keymap.set('n', "'", function()
+        local char = vim.fn.getcharstr()
+        T.goto_mark(char)
+      end, { desc = 'Go to buffer mark' })
+
+      -- Remap native marks to use <leader>
+      vim.keymap.set('n', '<leader>m', function()
+        local char = vim.fn.getcharstr()
+        local ok, err = pcall(vim.cmd, 'normal! m' .. char)
+        if not ok then
+          local vim_err = err:match("Vim%([^)]+%):(.*)") or err
+          vim.api.nvim_echo({{vim_err, "ErrorMsg"}}, true, {})
+        end
+      end, { desc = 'Set native vim mark' })
+
+      vim.keymap.set('n', "<leader>'", function()
+        local char = vim.fn.getcharstr()
+        local ok, err = pcall(vim.cmd, "normal! '" .. char)
+        if not ok then
+          local vim_err = err:match("Vim%([^)]+%):(.*)") or err
+          vim.api.nvim_echo({{vim_err, "ErrorMsg"}}, true, {})
+        end
+      end, { desc = 'Go to native vim mark' })
+    else
+      -- Default: use <leader> for buffer marks
+      vim.keymap.set('n', '<leader>m', function()
+        local char = vim.fn.getcharstr()
+        T.set_mark(char)
+      end, { desc = 'Set buffer mark' })
+
+      vim.keymap.set('n', "<leader>'", function()
+        local char = vim.fn.getcharstr()
+        T.goto_mark(char)
+      end, { desc = 'Go to buffer mark' })
+    end
   end
 end
 
