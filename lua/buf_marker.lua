@@ -50,7 +50,7 @@ T.list_marks = function()
   end
 
   -- Build output lines
-  local lines = {"mark  file"}
+  local lines = {}
   for _, mark in ipairs(mark_list) do
     -- Get relative path or full path
     local display_path = vim.fn.fnamemodify(mark.path, ':~:.')
@@ -60,7 +60,11 @@ T.list_marks = function()
   end
 
   -- Display in a message
-  vim.api.nvim_echo({{table.concat(lines, "\n"), "Normal"}}, true, {})
+  local output = {
+    {"mark  file", "Title"},
+    {"\n" .. table.concat(lines, "\n"), "Normal"}
+  }
+  vim.api.nvim_echo(output, true, {})
 end
 
 T.setup = function(opts)
