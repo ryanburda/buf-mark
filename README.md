@@ -56,6 +56,7 @@ With `swap_native_mark_keymaps = true`:
 - `'{char}` - Jump to the buffer associated with the mark
 - `<leader>m{char}` - Set a native vim mark
 - `<leader>'{char}` - Jump to a native vim mark
+
 This option allows for a more ergonomic workflow if you find yourself using buf marks more than
 native vim marks while still allowing for native vim marks to be set in an intuitive way.
 
@@ -115,15 +116,40 @@ require("buf_marker").setup({
 local buf_marker = require("buf_marker")
 
 -- Custom keymaps
-vim.keymap.set('n', 'mm', function()
-  local char = vim.fn.getcharstr()
-  buf_marker.set_mark(char)
-end, { desc = 'Set buffer mark' })
+vim.keymap.set(
+  'n',
+  '<leader>m', function()
+    local char = vim.fn.getcharstr()
+    buf_marker.set_mark(char)
+  end,
+  { desc = 'Set buffer mark' }
+)
 
-vim.keymap.set('n', 'mg', function()
-  local char = vim.fn.getcharstr()
-  buf_marker.goto_mark(char)
-end, { desc = 'Go to buffer mark' })
+vim.keymap.set(
+  'n',
+  "<leader>'",
+  function()
+    local char = vim.fn.getcharstr()
+    buf_marker.goto_mark(char)
+  end,
+  { desc = 'Go to buffer mark' }
+)
+```
+
+## Commands
+
+### `:BufMarks`
+
+Lists all buffer marks with their associated files. The output displays:
+- Mark character
+- File path (relative to current directory)
+
+Example output:
+```
+mark  file
+ a    src/config.lua
+ b    README.md
+ c    /path/to/unloaded/file.txt
 ```
 
 ## API
@@ -171,6 +197,15 @@ Jump to the buffer associated with the given mark.
 **Example:**
 ```lua
 require("buf_marker").goto_mark('a')
+```
+
+### `list_marks()`
+
+Display all buffer marks with their associated buffer information. This is the same as running `:BufMarks`.
+
+**Example:**
+```lua
+require("buf_marker").list_marks()
 ```
 
 ## License

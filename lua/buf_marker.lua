@@ -33,6 +33,36 @@ T.goto_mark = function(char)
   end
 end
 
+-- Lists all buffer marks
+T.list_marks = function()
+  -- Collect all marks and sort them
+  local mark_list = {}
+  for char, path in pairs(T.marks) do
+    table.insert(mark_list, {char = char, path = path})
+  end
+
+  -- Sort by character
+  table.sort(mark_list, function(a, b) return a.char < b.char end)
+
+  if #mark_list == 0 then
+    vim.api.nvim_echo({{"No buffer marks set", "WarningMsg"}}, true, {})
+    return
+  end
+
+  -- Build output lines
+  local lines = {"mark  file"}
+  for _, mark in ipairs(mark_list) do
+    -- Get relative path or full path
+    local display_path = vim.fn.fnamemodify(mark.path, ':~:.')
+
+    local line = string.format(" %s    %s", mark.char, display_path)
+    table.insert(lines, line)
+  end
+
+  -- Display in a message
+  vim.api.nvim_echo({{table.concat(lines, "\n"), "Normal"}}, true, {})
+end
+
 T.setup = function(opts)
   opts = opts or {}
 
@@ -56,6 +86,11 @@ T.setup = function(opts)
       vim.b[bufnr].buf_marker.last_cursor_position = cursor_position
     end,
   })
+
+  -- Register the :BufMarks command
+  vim.api.nvim_create_user_command('BufMarks', function()
+    T.list_marks()
+  end, { desc = 'List all buffer marks' })
 
   -- Setup keymaps if not disabled
   if opts.keymaps ~= false then
