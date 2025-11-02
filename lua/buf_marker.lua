@@ -1,26 +1,3 @@
----Get the buffer number from a file path.
----@param path string: The full path of the file.
----@return number|nil: The buffer number or nil if not found.
-local get_bufnr_by_path = function(path)
-  -- Get the list of all buffer numbers
-  local buffers = vim.api.nvim_list_bufs()
-
-  -- Iterate through each buffer
-  for _, buf in ipairs(buffers) do
-    -- Check if the buffer has a name and compare it to the file_name
-    if vim.api.nvim_buf_is_loaded(buf) then
-      -- Get the buffer name (full path)
-      local buf_name = vim.api.nvim_buf_get_name(buf)
-      if buf_name == path then
-        return buf
-      end
-    end
-  end
-
-  -- Return nil if no matching buffer is found
-  return nil
-end
-
 T = {}
 
 -- Dictionary mapping single characters to file paths
@@ -45,9 +22,9 @@ T.goto_mark = function(char)
     return
   end
 
-  local bufnr = get_bufnr_by_path(path)
+  local bufnr = vim.fn.bufnr(path)
 
-  if bufnr then
+  if bufnr ~= -1 then
     -- If the buffer exists, switch to it
     vim.api.nvim_set_current_buf(bufnr)
   else
