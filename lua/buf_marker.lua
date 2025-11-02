@@ -50,7 +50,9 @@ T.goto_mark = function(char)
   end
 end
 
-T.setup = function()
+T.setup = function(opts)
+  opts = opts or {}
+
   -- Cursor position autocommands.
   vim.api.nvim_create_augroup('BufMarkerSaveCursorPos', { clear = true })
 
@@ -71,6 +73,19 @@ T.setup = function()
       vim.b[bufnr].buf_marker.last_cursor_position = cursor_position
     end,
   })
+
+  -- Setup keymaps if not disabled
+  if opts.keymaps ~= false then
+    vim.keymap.set('n', '<leader>m', function()
+      local char = vim.fn.getcharstr()
+      T.set_mark(char)
+    end, { desc = 'Set buffer mark' })
+
+    vim.keymap.set('n', "<leader>'", function()
+      local char = vim.fn.getcharstr()
+      T.goto_mark(char)
+    end, { desc = 'Go to buffer mark' })
+  end
 end
 
 return T
