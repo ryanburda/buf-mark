@@ -39,6 +39,12 @@ end
 -- Goes to the buffer associated with a character
 T.goto_mark = function(char)
   local path = T.marks[char]
+
+  if not path then
+    vim.api.nvim_echo({{"Buf Mark not set", "ErrorMsg"}}, true, {})
+    return
+  end
+
   local bufnr = get_bufnr_by_path(path)
 
   if bufnr then
