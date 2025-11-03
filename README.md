@@ -169,7 +169,7 @@ Example output:
 mark  file
  a    src/config.lua
  b    README.md
- c    /path/to/unloaded/file.txt
+ c    /path/to/file.txt
 ```
 
 ### `:BufMarkerSet <char>`
@@ -197,6 +197,15 @@ Jump to the buffer associated with the specified mark character.
 **Example:**
 ```
 :BufMarkerGoto a
+```
+
+### `:BufMarkerDeleteAll`
+
+Delete all buffer marks for the current project. This will clear all marks in the current working directory.
+
+**Example:**
+```
+:BufMarkerDeleteAll
 ```
 
 ## API
@@ -247,9 +256,18 @@ Jump to the buffer associated with the given mark.
 require("buf_marker").goto_mark('a')
 ```
 
+### `delete_all()`
+
+Delete all buffer marks for the current project.
+
+**Example:**
+```lua
+require("buf_marker").delete_all()
+```
+
 ### `list_marks()`
 
-Display all buffer marks with their associated buffer information. This is the same as running `:BufMarks`.
+Display all buffer marks with their associated buffer information. This is the same as running `:BufMarkerList`.
 
 **Example:**
 ```lua

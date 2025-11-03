@@ -74,6 +74,12 @@ T.delete_mark = function(char)
   save_marks()
 end
 
+-- Deletes all marks for the current project
+T.delete_all = function()
+  T.marks = {}
+  save_marks()
+end
+
 -- Goes to the buffer associated with a character
 T.goto_mark = function(char)
   local path = T.marks[char]
@@ -194,6 +200,12 @@ T.setup = function(opts)
     end
     T.goto_mark(char)
   end, { nargs = 1, desc = 'Go to buffer mark for character' })
+
+  -- Register the :BufMarkerDeleteAll command
+  vim.api.nvim_create_user_command('BufMarkerDeleteAll', function()
+    T.delete_all()
+    vim.api.nvim_echo({{"All buffer marks deleted", "WarningMsg"}}, true, {})
+  end, { desc = 'Delete all buffer marks for current project' })
 
   -- Setup keymaps if not disabled
   if opts.keymaps ~= false then
