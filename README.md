@@ -1,6 +1,7 @@
 # buf_marker.nvim
 
-A Neovim plugin that provides vim-like marks for buffers, allowing you to quickly jump between buffers while preserving cursor positions.
+A Neovim plugin that provides vim-like marks for buffers, allowing you to quickly jump between buffers while
+preserving cursor positions.
 
 ## Features
 
@@ -47,18 +48,9 @@ EOF
 
 ### Default Keymaps
 
-By default:
+The default keymaps mirror native marks but are prefixed with `<leader>`:
 - `<leader>m{char}` - Set a buffer mark for the current buffer
 - `<leader>'{char}` - Jump to the buffer associated with the mark
-
-With `swap_native_mark_keymaps = true`:
-- `m{char}` - Set a buffer mark for the current buffer
-- `'{char}` - Jump to the buffer associated with the mark
-- `<leader>m{char}` - Set a native vim mark
-- `<leader>'{char}` - Jump to a native vim mark
-
-This option allows for a more ergonomic workflow if you find yourself using buf marks more than
-native vim marks while still allowing for native vim marks to be set in an intuitive way.
 
 ### Example Workflow
 
@@ -69,11 +61,8 @@ native vim marks while still allowing for native vim marks to be set in an intui
 
 ### How It Works
 
-Unlike vim's traditional marks which remember positions within a file, buffer marks remember entire buffers. When you jump to a buffer mark:
-
-- If the buffer is already loaded, it switches to that buffer
-- If the buffer is not loaded, it opens the file
-- The cursor position is automatically restored to where you last left it
+Unlike vim's traditional marks which remember positions within a file, buffer marks remember entire buffers. When
+you jump to a buffer mark the cursor position is automatically restored to where you last left it.
 
 ## Configuration
 
@@ -96,7 +85,8 @@ require("buf_marker").setup({
 
 #### Swapping Native Mark Keymaps
 
-If you prefer to use `m` and `'` for buffer marks (instead of `<leader>m` and `<leader>'`), you can enable the swap:
+If you prefer to use `m` and `'` for buffer marks (instead of `<leader>m` and `<leader>'`), you can enable these
+to be swapped:
 
 ```lua
 require("buf_marker").setup({
@@ -106,11 +96,11 @@ require("buf_marker").setup({
 
 This will map:
 - `m{char}` and `'{char}` to buffer marks
-- `<leader>m{char}` and `<leader>'{char}` to native vim marks
+- `<leader>m{char}` and `<leader>'{char}` to native marks
 
-#### Mark Persistence
+#### Buffer Mark Persistence
 
-Enable persistence to save marks between Neovim sessions:
+Enable buffer marks to be saved between Neovim sessions:
 
 ```lua
 require("buf_marker").setup({
@@ -135,25 +125,42 @@ require("buf_marker").setup({
 
 local buf_marker = require("buf_marker")
 
--- Custom keymaps
+-- Custom Keymap Examples
+--
+-- Dynamically mapped:
+-- Similar to the default keymaps, this uses `vim.fn.getcharstr()` to get the buffer mark character after invoking the keymap.
+-- `<leader>B{char}` to set a buffer mark
 vim.keymap.set(
   'n',
-  '<leader>m', function()
+  '<leader>B', function()
+    -- The next character typed will be the character the buffer mark is mapped to
     local char = vim.fn.getcharstr()
     buf_marker.set_mark(char)
   end,
-  { desc = 'Set buffer mark' }
+  { desc = "Set buffer mark" }
 )
-
+-- `<leader>b{char}` to go to a buffer mark
 vim.keymap.set(
   'n',
-  "<leader>'",
+  '<leader>b',
   function()
+    -- The next character typed will be the buffer mark to go to
     local char = vim.fn.getcharstr()
     buf_marker.goto_mark(char)
   end,
   { desc = 'Go to buffer mark' }
 )
+
+-- Explicitly mapped:
+-- If you know you are only going to use a fixed set of buffer marks then you can configure keymaps to reflect that.
+vim.keymap.set('n', '<leader>!', function() buf_marker.set_mark('1') end)
+vim.keymap.set('n', '<leader>1', function() buf_marker.goto_mark('1') end)
+
+vim.keymap.set('n', '<leader>@', function() buf_marker.set_mark('2') end)
+vim.keymap.set('n', '<leader>2', function() buf_marker.goto_mark('2') end)
+
+vim.keymap.set('n', '<leader>#', function() buf_marker.set_mark('3') end)
+vim.keymap.set('n', '<leader>3', function() buf_marker.goto_mark('3') end)
 ```
 
 ## Commands
@@ -201,7 +208,7 @@ Jump to the buffer associated with the specified mark character.
 
 ### `:BufMarkerDeleteAll`
 
-Delete all buffer marks for the current project. This will clear all marks in the current working directory.
+Delete all buffer marks for the current project. This will clear all marks in the current working directory if buffer marks are being persisted.
 
 **Example:**
 ```
