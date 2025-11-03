@@ -3,29 +3,38 @@ T = {}
 -- Dictionary mapping single characters to file paths
 T.marks = {}
 
+-- Configuration options
+T.config = {
+  persist = false
+}
+
 -- Get the storage file path for current working directory
 local function get_storage_path()
   local data_dir = vim.fn.stdpath('data')
   local storage_dir = data_dir .. '/buf_marker'
-  
+
   -- Create directory if it doesn't exist
   vim.fn.mkdir(storage_dir, 'p')
-  
+
   -- Generate a hash of the current working directory
   local cwd = vim.fn.getcwd()
   local hash = vim.fn.sha256(cwd)
-  
+
   return storage_dir .. '/' .. hash .. '.json'
 end
 
 -- Save marks to disk
 local function save_marks()
+  if not T.config.persist then
+    return
+  end
+
   local storage_path = get_storage_path()
   local data = {
     cwd = vim.fn.getcwd(),
     marks = T.marks
   }
-  
+
   local json_str = vim.json.encode(data)
   local file = io.open(storage_path, 'w')
   if file then
@@ -41,10 +50,10 @@ local function load_marks()
   if not file then
     return
   end
-  
+
   local content = file:read('*all')
   file:close()
-  
+
   if content and content ~= '' then
     local ok, data = pcall(vim.json.decode, content)
     if ok and data and data.marks then
@@ -122,8 +131,13 @@ end
 T.setup = function(opts)
   opts = opts or {}
 
-  -- Load existing marks for this directory
-  load_marks()
+  -- Update configuration
+  T.config.persist = opts.persist or false
+
+  -- Load existing marks for this directory if persistence is enabled
+  if T.config.persist then
+    load_marks()
+  end
 
   -- Cursor position autocommands.
   vim.api.nvim_create_augroup('BufMarkerSaveCursorPos', { clear = true })

@@ -87,6 +87,10 @@ require("buf_marker").setup({
   -- Set to true to swap native mark keymaps with buffer mark keymaps
   -- (only works when keymaps = true)
   swap_native_mark_keymaps = false,
+
+  -- Set to true to persist marks between Neovim sessions
+  -- Marks will be saved per working directory
+  persist = false,
 })
 ```
 
@@ -103,6 +107,22 @@ require("buf_marker").setup({
 This will map:
 - `m{char}` and `'{char}` to buffer marks
 - `<leader>m{char}` and `<leader>'{char}` to native vim marks
+
+#### Mark Persistence
+
+Enable persistence to save marks between Neovim sessions:
+
+```lua
+require("buf_marker").setup({
+  persist = true,
+})
+```
+
+When enabled:
+- Marks are automatically saved when set or deleted
+- Marks are loaded when the plugin initializes
+- Each working directory has its own set of marks (e.g., marks in `~/project-a` are separate from `~/project-b`)
+- Marks are stored in `~/.local/share/nvim/buf_marker/` as JSON files
 
 ### Custom Keymaps
 
@@ -162,6 +182,7 @@ Initialize the plugin with optional configuration.
 - `opts` (table, optional): Configuration options
   - `keymaps` (boolean): Enable/disable default keymaps (default: `true`)
   - `swap_native_mark_keymaps` (boolean): Swap buffer mark and native mark keymaps (default: `false`, only works when `keymaps = true`)
+  - `persist` (boolean): Enable mark persistence between sessions, saved per working directory (default: `false`)
 
 ### `set_mark(char)`
 
