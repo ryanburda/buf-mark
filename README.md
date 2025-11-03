@@ -158,7 +158,7 @@ vim.keymap.set(
 
 ## Commands
 
-### `:BufMarks`
+### `:BufMarkerList`
 
 Lists all buffer marks with their associated files. The output displays:
 - Mark character

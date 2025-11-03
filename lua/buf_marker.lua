@@ -160,8 +160,8 @@ T.setup = function(opts)
     end,
   })
 
-  -- Register the :BufMarks command
-  vim.api.nvim_create_user_command('BufMarks', function()
+  -- Register the :BufMarkerList command
+  vim.api.nvim_create_user_command('BufMarkerList', function()
     T.list_marks()
   end, { desc = 'List all buffer marks' })
 
