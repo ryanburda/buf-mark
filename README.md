@@ -172,6 +172,33 @@ mark  file
  c    /path/to/unloaded/file.txt
 ```
 
+### `:BufMarkerSet <char>`
+
+Set a buffer mark for the current buffer using the specified character.
+
+**Example:**
+```
+:BufMarkerSet a
+```
+
+### `:BufMarkerDelete <char>`
+
+Delete the buffer mark for the specified character.
+
+**Example:**
+```
+:BufMarkerDelete a
+```
+
+### `:BufMarkerGoto <char>`
+
+Jump to the buffer associated with the specified mark character.
+
+**Example:**
+```
+:BufMarkerGoto a
+```
+
 ## API
 
 ### `setup(opts)`

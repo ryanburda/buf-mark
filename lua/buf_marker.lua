@@ -165,6 +165,36 @@ T.setup = function(opts)
     T.list_marks()
   end, { desc = 'List all buffer marks' })
 
+  -- Register the :BufMarkerSet command
+  vim.api.nvim_create_user_command('BufMarkerSet', function(opts)
+    local char = opts.args
+    if char == '' or #char ~= 1 then
+      vim.api.nvim_echo({{"Please provide a single character", "ErrorMsg"}}, true, {})
+      return
+    end
+    T.set_mark(char)
+  end, { nargs = 1, desc = 'Set buffer mark for character' })
+
+  -- Register the :BufMarkerDelete command
+  vim.api.nvim_create_user_command('BufMarkerDelete', function(opts)
+    local char = opts.args
+    if char == '' or #char ~= 1 then
+      vim.api.nvim_echo({{"Please provide a single character", "ErrorMsg"}}, true, {})
+      return
+    end
+    T.delete_mark(char)
+  end, { nargs = 1, desc = 'Delete buffer mark for character' })
+
+  -- Register the :BufMarkerGoto command
+  vim.api.nvim_create_user_command('BufMarkerGoto', function(opts)
+    local char = opts.args
+    if char == '' or #char ~= 1 then
+      vim.api.nvim_echo({{"Please provide a single character", "ErrorMsg"}}, true, {})
+      return
+    end
+    T.goto_mark(char)
+  end, { nargs = 1, desc = 'Go to buffer mark for character' })
+
   -- Setup keymaps if not disabled
   if opts.keymaps ~= false then
     if opts.swap_native_mark_keymaps then
