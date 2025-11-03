@@ -1,4 +1,4 @@
-# buf_marker.nvim
+# buf-mark
 
 A Neovim plugin that provides vim-like marks for buffers, allowing you to quickly jump between buffers while
 preserving cursor positions.
@@ -16,9 +16,9 @@ preserving cursor positions.
 
 ```lua
 {
-  "ryanburda/buf_marker.nvim",
+  "ryanburda/buf-mark",
   config = function()
-    require("buf_marker").setup()
+    require("buf-mark").setup()
   end,
 }
 ```
@@ -27,21 +27,11 @@ preserving cursor positions.
 
 ```lua
 use {
-  "ryanburda/buf_marker.nvim",
+  "ryanburda/buf-mark",
   config = function()
-    require("buf_marker").setup()
+    require("buf-mark").setup()
   end,
 }
-```
-
-### [vim-plug](https://github.com/junegunn/vim-plug)
-
-```vim
-Plug 'ryanburda/buf_marker.nvim'
-
-lua << EOF
-require("buf_marker").setup()
-EOF
 ```
 
 ## Usage
@@ -69,41 +59,21 @@ you jump to a buffer mark the cursor position is automatically restored to where
 ### Setup Options
 
 ```lua
-require("buf_marker").setup({
+require("buf-mark").setup({
   -- Set to false to disable default keymaps
   keymaps = true,
-
-  -- Set to true to swap native mark keymaps with buffer mark keymaps
-  -- (only works when keymaps = true)
-  swap_native_mark_keymaps = false,
-
   -- Set to true to persist marks between Neovim sessions
   -- Marks will be saved per working directory
-  persist = false,
+  persist = true,
 })
 ```
-
-#### Swapping Native Mark Keymaps
-
-If you prefer to use `m` and `'` for buffer marks (instead of `<leader>m` and `<leader>'`), you can enable these
-to be swapped:
-
-```lua
-require("buf_marker").setup({
-  swap_native_mark_keymaps = true,
-})
-```
-
-This will map:
-- `m{char}` and `'{char}` to buffer marks
-- `<leader>m{char}` and `<leader>'{char}` to native marks
 
 #### Buffer Mark Persistence
 
 Enable buffer marks to be saved between Neovim sessions:
 
 ```lua
-require("buf_marker").setup({
+require("buf-mark").setup({
   persist = true,
 })
 ```
@@ -112,18 +82,18 @@ When enabled:
 - Marks are automatically saved when set or deleted
 - Marks are loaded when the plugin initializes
 - Each working directory has its own set of marks (e.g., marks in `~/project-a` are separate from `~/project-b`)
-- Marks are stored in `~/.local/share/nvim/buf_marker/` as JSON files
+- Marks are stored in `~/.local/share/nvim/buf-mark/` as JSON files
 
 ### Custom Keymaps
 
 If you prefer custom keymaps, disable the defaults and set your own:
 
 ```lua
-require("buf_marker").setup({
+require("buf-mark").setup({
   keymaps = false,
 })
 
-local buf_marker = require("buf_marker")
+local buf_mark = require("buf-mark")
 
 -- Custom Keymap Examples
 --
@@ -135,7 +105,7 @@ vim.keymap.set(
   '<leader>B', function()
     -- The next character typed will be the character the buffer mark is mapped to
     local char = vim.fn.getcharstr()
-    buf_marker.set_mark(char)
+    buf_mark.set_mark(char)
   end,
   { desc = "Set buffer mark" }
 )
@@ -146,26 +116,26 @@ vim.keymap.set(
   function()
     -- The next character typed will be the buffer mark to go to
     local char = vim.fn.getcharstr()
-    buf_marker.goto_mark(char)
+    buf_mark.goto_mark(char)
   end,
   { desc = 'Go to buffer mark' }
 )
 
 -- Explicitly mapped:
 -- If you know you are only going to use a fixed set of buffer marks then you can configure keymaps to reflect that.
-vim.keymap.set('n', '<leader>!', function() buf_marker.set_mark('1') end)
-vim.keymap.set('n', '<leader>1', function() buf_marker.goto_mark('1') end)
+vim.keymap.set('n', '<leader>!', function() buf_mark.set_mark('1') end)
+vim.keymap.set('n', '<leader>1', function() buf_mark.goto_mark('1') end)
 
-vim.keymap.set('n', '<leader>@', function() buf_marker.set_mark('2') end)
-vim.keymap.set('n', '<leader>2', function() buf_marker.goto_mark('2') end)
+vim.keymap.set('n', '<leader>@', function() buf_mark.set_mark('2') end)
+vim.keymap.set('n', '<leader>2', function() buf_mark.goto_mark('2') end)
 
-vim.keymap.set('n', '<leader>#', function() buf_marker.set_mark('3') end)
-vim.keymap.set('n', '<leader>3', function() buf_marker.goto_mark('3') end)
+vim.keymap.set('n', '<leader>#', function() buf_mark.set_mark('3') end)
+vim.keymap.set('n', '<leader>3', function() buf_mark.goto_mark('3') end)
 ```
 
 ## Commands
 
-### `:BufMarkerList`
+### `:BufMarks`
 
 Lists all buffer marks with their associated files. The output displays:
 - Mark character
@@ -179,40 +149,40 @@ mark  file
  c    /path/to/file.txt
 ```
 
-### `:BufMarkerSet <char>`
+### `:BufMarkSet <char>`
 
 Set a buffer mark for the current buffer using the specified character.
 
 **Example:**
 ```
-:BufMarkerSet a
+:BufMarkSet a
 ```
 
-### `:BufMarkerDelete <char>`
+### `:BufMarkDelete <char>`
 
 Delete the buffer mark for the specified character.
 
 **Example:**
 ```
-:BufMarkerDelete a
+:BufMarkDelete a
 ```
 
-### `:BufMarkerGoto <char>`
+### `:BufMarkGoto <char>`
 
 Jump to the buffer associated with the specified mark character.
 
 **Example:**
 ```
-:BufMarkerGoto a
+:BufMarkGoto a
 ```
 
-### `:BufMarkerDeleteAll`
+### `:BufMarkDeleteAll`
 
 Delete all buffer marks for the current project. This will clear all marks in the current working directory if buffer marks are being persisted.
 
 **Example:**
 ```
-:BufMarkerDeleteAll
+:BufMarkDeleteAll
 ```
 
 ## API
@@ -224,8 +194,24 @@ Initialize the plugin with optional configuration.
 **Parameters:**
 - `opts` (table, optional): Configuration options
   - `keymaps` (boolean): Enable/disable default keymaps (default: `true`)
-  - `swap_native_mark_keymaps` (boolean): Swap buffer mark and native mark keymaps (default: `false`, only works when `keymaps = true`)
-  - `persist` (boolean): Enable mark persistence between sessions, saved per working directory (default: `false`)
+  - `persist` (boolean): Enable mark persistence between sessions, saved per working directory (default: `true`)
+
+**Example:**
+```lua
+require("buf-mark").setup({
+  keymaps = true,
+  persist = true,
+})
+```
+
+### `list_marks()`
+
+Display all buffer marks with their associated buffer information.
+
+**Example:**
+```lua
+require("buf-mark").list_marks()
+```
 
 ### `set_mark(char)`
 
@@ -236,7 +222,7 @@ Set a buffer mark for the current buffer.
 
 **Example:**
 ```lua
-require("buf_marker").set_mark('a')
+require("buf-mark").set_mark('a')
 ```
 
 ### `delete_mark(char)`
@@ -248,7 +234,7 @@ Delete a buffer mark.
 
 **Example:**
 ```lua
-require("buf_marker").delete_mark('a')
+require("buf-mark").delete_mark('a')
 ```
 
 ### `goto_mark(char)`
@@ -260,7 +246,7 @@ Jump to the buffer associated with the given mark.
 
 **Example:**
 ```lua
-require("buf_marker").goto_mark('a')
+require("buf-mark").goto_mark('a')
 ```
 
 ### `delete_all()`
@@ -269,16 +255,7 @@ Delete all buffer marks for the current project.
 
 **Example:**
 ```lua
-require("buf_marker").delete_all()
-```
-
-### `list_marks()`
-
-Display all buffer marks with their associated buffer information. This is the same as running `:BufMarkerList`.
-
-**Example:**
-```lua
-require("buf_marker").list_marks()
+require("buf-mark").delete_all()
 ```
 
 ## License

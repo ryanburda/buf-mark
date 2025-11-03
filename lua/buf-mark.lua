@@ -1,17 +1,17 @@
-T = {}
+local T = {}
 
 -- Dictionary mapping single characters to file paths
 T.marks = {}
 
 -- Configuration options
 T.config = {
-  persist = false
+  persist = true
 }
 
 -- Get the storage file path for current working directory
 local function get_storage_path()
   local data_dir = vim.fn.stdpath('data')
-  local storage_dir = data_dir .. '/buf_marker'
+  local storage_dir = data_dir .. '/buf_mark'
 
   -- Create directory if it doesn't exist
   vim.fn.mkdir(storage_dir, 'p')
@@ -85,7 +85,7 @@ T.goto_mark = function(char)
   local path = T.marks[char]
 
   if not path then
-    vim.api.nvim_echo({{"Buf Mark not set", "ErrorMsg"}}, true, {})
+    vim.api.nvim_echo({{"Buffer Mark not set", "ErrorMsg"}}, true, {})
     return
   end
 
@@ -138,7 +138,7 @@ T.setup = function(opts)
   opts = opts or {}
 
   -- Update configuration
-  T.config.persist = opts.persist or false
+  T.config.persist = opts.persist or true
 
   -- Load existing marks for this directory if persistence is enabled
   if T.config.persist then
@@ -146,11 +146,11 @@ T.setup = function(opts)
   end
 
   -- Cursor position autocommands.
-  vim.api.nvim_create_augroup('BufMarkerSaveCursorPos', { clear = true })
+  vim.api.nvim_create_augroup('BufMarkSaveCursorPos', { clear = true })
 
   -- Create an autocommand to update the last known cursor position
   vim.api.nvim_create_autocmd({'BufLeave'}, {
-    group = 'BufMarkerSaveCursorPos',
+    group = 'BufMarkSaveCursorPos',
     pattern = '*',
     callback = function()
       -- Get the current buffer number and the cursor position
@@ -158,21 +158,21 @@ T.setup = function(opts)
       local cursor_position = vim.api.nvim_win_get_cursor(0)
 
       -- Save the cursor position to a buffer variable
-      if not vim.b[bufnr].buf_marker then
-        vim.b[bufnr].buf_marker = {}
+      if not vim.b[bufnr].buf_mark then
+        vim.b[bufnr].buf_mark = {}
       end
 
-      vim.b[bufnr].buf_marker.last_cursor_position = cursor_position
+      vim.b[bufnr].buf_mark.last_cursor_position = cursor_position
     end,
   })
 
-  -- Register the :BufMarkerList command
-  vim.api.nvim_create_user_command('BufMarkerList', function()
+  -- Register the :BufMarks command
+  vim.api.nvim_create_user_command('BufMarks', function()
     T.list_marks()
   end, { desc = 'List all buffer marks' })
 
-  -- Register the :BufMarkerSet command
-  vim.api.nvim_create_user_command('BufMarkerSet', function(opts)
+  -- Register the :BufMarkSet command
+  vim.api.nvim_create_user_command('BufMarkSet', function(opts)
     local char = opts.args
     if char == '' or #char ~= 1 then
       vim.api.nvim_echo({{"Please provide a single character", "ErrorMsg"}}, true, {})
@@ -181,8 +181,8 @@ T.setup = function(opts)
     T.set_mark(char)
   end, { nargs = 1, desc = 'Set buffer mark for character' })
 
-  -- Register the :BufMarkerDelete command
-  vim.api.nvim_create_user_command('BufMarkerDelete', function(opts)
+  -- Register the :BufMarkDelete command
+  vim.api.nvim_create_user_command('BufMarkDelete', function(opts)
     local char = opts.args
     if char == '' or #char ~= 1 then
       vim.api.nvim_echo({{"Please provide a single character", "ErrorMsg"}}, true, {})
@@ -191,8 +191,8 @@ T.setup = function(opts)
     T.delete_mark(char)
   end, { nargs = 1, desc = 'Delete buffer mark for character' })
 
-  -- Register the :BufMarkerGoto command
-  vim.api.nvim_create_user_command('BufMarkerGoto', function(opts)
+  -- Register the :BufMarkGoto command
+  vim.api.nvim_create_user_command('BufMarkGoto', function(opts)
     local char = opts.args
     if char == '' or #char ~= 1 then
       vim.api.nvim_echo({{"Please provide a single character", "ErrorMsg"}}, true, {})
@@ -201,56 +201,23 @@ T.setup = function(opts)
     T.goto_mark(char)
   end, { nargs = 1, desc = 'Go to buffer mark for character' })
 
-  -- Register the :BufMarkerDeleteAll command
-  vim.api.nvim_create_user_command('BufMarkerDeleteAll', function()
+  -- Register the :BufMarkDeleteAll command
+  vim.api.nvim_create_user_command('BufMarkDeleteAll', function()
     T.delete_all()
     vim.api.nvim_echo({{"All buffer marks deleted", "WarningMsg"}}, true, {})
   end, { desc = 'Delete all buffer marks for current project' })
 
   -- Setup keymaps if not disabled
   if opts.keymaps ~= false then
-    if opts.swap_native_mark_keymaps then
-      -- Use m and ' for buffer marks
-      vim.keymap.set('n', 'm', function()
-        local char = vim.fn.getcharstr()
-        T.set_mark(char)
-      end, { desc = 'Set buffer mark' })
+    vim.keymap.set('n', '<leader>m', function()
+      local char = vim.fn.getcharstr()
+      T.set_mark(char)
+    end, { desc = 'Set buffer mark' })
 
-      vim.keymap.set('n', "'", function()
-        local char = vim.fn.getcharstr()
-        T.goto_mark(char)
-      end, { desc = 'Go to buffer mark' })
-
-      -- Remap native marks to use <leader>
-      vim.keymap.set('n', '<leader>m', function()
-        local char = vim.fn.getcharstr()
-        local ok, err = pcall(vim.cmd, 'normal! m' .. char)
-        if not ok then
-          local vim_err = err:match("Vim%([^)]+%):(.*)") or err
-          vim.api.nvim_echo({{vim_err, "ErrorMsg"}}, true, {})
-        end
-      end, { desc = 'Set native vim mark' })
-
-      vim.keymap.set('n', "<leader>'", function()
-        local char = vim.fn.getcharstr()
-        local ok, err = pcall(vim.cmd, "normal! '" .. char)
-        if not ok then
-          local vim_err = err:match("Vim%([^)]+%):(.*)") or err
-          vim.api.nvim_echo({{vim_err, "ErrorMsg"}}, true, {})
-        end
-      end, { desc = 'Go to native vim mark' })
-    else
-      -- Default: use <leader> for buffer marks
-      vim.keymap.set('n', '<leader>m', function()
-        local char = vim.fn.getcharstr()
-        T.set_mark(char)
-      end, { desc = 'Set buffer mark' })
-
-      vim.keymap.set('n', "<leader>'", function()
-        local char = vim.fn.getcharstr()
-        T.goto_mark(char)
-      end, { desc = 'Go to buffer mark' })
-    end
+    vim.keymap.set('n', "<leader>'", function()
+      local char = vim.fn.getcharstr()
+      T.goto_mark(char)
+    end, { desc = 'Go to buffer mark' })
   end
 end
 
