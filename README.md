@@ -1,14 +1,64 @@
 # buf-mark
 
-A Neovim plugin that provides vim-like marks for buffers, allowing you to quickly jump between buffers while
-preserving cursor positions.
+A Neovim plugin that provides vim-like marks for buffers, allowing you to quickly jump between buffers while preserving cursor positions.
 
-## Features
+## Problem
 
+When working with multiple files in Neovim, there are typically two main approaches to switch between buffers:
+
+1. **Sequential navigation**: Using `:bnext`, `:bprev`, and `:b#` to cycle through buffers
+2. **Fuzzy finding**: Using tools like Telescope or fzf to search and select files
+
+Both approaches have limitations:
+- Sequential navigation becomes tedious when you have many buffers open - you end up spamming `:bprev` and `:bnext` to find the file you want
+- Fuzzy finders require you to type out enough of the filename to narrow the results down
+
+## Solution
+Unlike vim's traditional marks which remember positions within a file, buffer marks remember entire buffers. When
+you jump to a buffer mark the cursor position is automatically restored to where you last left it.
+
+### Features
 - **Buffer Marks**: Set marks to buffers using single characters (similar to vim's global marks)
-- **Cursor Position Preservation**: Automatically saves and restores cursor position when leaving and entering buffers
+- **Cursor Position Preservation**: Automatically saves and restores cursor position when leaving and entering marked buffers
+- **Mark Persistence**: Optionally persist marks across Neovim sessions, saved per working directory
 - **Simple API**: Easy-to-use functions for setting, deleting, and jumping to buffer marks
 - **Customizable Keymaps**: Default keymaps provided, but can be disabled for custom configuration
+
+### Differences from Native Vim Marks
+
+| Feature | native marks | buf-marks |
+|---------|------------------|----------|
+| **Scope** | Position within a single file | Entire buffer/file |
+| **Navigation** | Jump to specific line/column | Jump to buffer + restore cursor position |
+| **Persistence** | Lost when buffer is deleted | Optionally persists across sessions |
+| **Use Case** | Bookmarking locations within files | Quick buffer switching |
+
+### Differences from Harpoon
+
+While both buf-mark and [Harpoon](https://github.com/ThePrimeagen/harpoon) solve the buffer navigation problem, they take different approaches:
+
+| Feature | Harpoon | buf-mark |
+|---------|---------|----------|
+| **Organization** | Ordered list (1, 2, 3...) | Character-based mapping (a, b, c...) |
+| **Navigation** | Navigate by position in list | Navigate by mnemonic character |
+| **Maintenance** | Manual ordering and list management | Set and forget individual marks |
+| **Memory Aid** | Remember position in list | Remember meaningful character associations |
+| **Flexibility** | Fixed positions, requires reordering | Independent marks, no ordering constraints |
+
+## Usage
+
+### Default Keymaps
+
+The default keymaps mirror native marks but are prefixed with `<leader>`:
+- `<leader>m{char}` - Set a buffer mark for the current buffer
+- `<leader>'{char}` - Jump to the buffer associated with the mark
+
+### Example Workflow
+
+1. Open a file (e.g., `config.lua`)
+2. Press `<leader>mc` to mark this buffer with character `c`
+3. Navigate to another file
+4. Press `<leader>'c` to instantly jump back to `config.lua` at the exact cursor position you left
 
 ## Installation
 
@@ -33,26 +83,6 @@ use {
   end,
 }
 ```
-
-## Usage
-
-### Default Keymaps
-
-The default keymaps mirror native marks but are prefixed with `<leader>`:
-- `<leader>m{char}` - Set a buffer mark for the current buffer
-- `<leader>'{char}` - Jump to the buffer associated with the mark
-
-### Example Workflow
-
-1. Open a file (e.g., `config.lua`)
-2. Press `<leader>mc` to mark this buffer with character `c`
-3. Navigate to another file
-4. Press `<leader>'c` to instantly jump back to `config.lua` at the exact cursor position you left
-
-### How It Works
-
-Unlike vim's traditional marks which remember positions within a file, buffer marks remember entire buffers. When
-you jump to a buffer mark the cursor position is automatically restored to where you last left it.
 
 ## Configuration
 
@@ -98,7 +128,8 @@ local buf_mark = require("buf-mark")
 -- Custom Keymap Examples
 --
 -- Dynamically mapped:
--- Similar to the default keymaps, this uses `vim.fn.getcharstr()` to get the buffer mark character after invoking the keymap.
+-- Similar to the default keymaps, this uses `vim.fn.getcharstr()` to
+-- get the buffer mark character after invoking the keymap.
 -- `<leader>B{char}` to set a buffer mark
 vim.keymap.set(
   'n',
@@ -122,7 +153,8 @@ vim.keymap.set(
 )
 
 -- Explicitly mapped:
--- If you know you are only going to use a fixed set of buffer marks then you can configure keymaps to reflect that.
+-- If you know you are only going to use a fixed set of buffer
+-- marks -- then you can configure keymaps to reflect that.
 vim.keymap.set('n', '<leader>!', function() buf_mark.set('1') end)
 vim.keymap.set('n', '<leader>1', function() buf_mark.goto('1') end)
 
