@@ -105,7 +105,7 @@ vim.keymap.set(
   '<leader>B', function()
     -- The next character typed will be the character the buffer mark is mapped to
     local char = vim.fn.getcharstr()
-    buf_mark.set_mark(char)
+    buf_mark.set(char)
   end,
   { desc = "Set buffer mark" }
 )
@@ -116,26 +116,26 @@ vim.keymap.set(
   function()
     -- The next character typed will be the buffer mark to go to
     local char = vim.fn.getcharstr()
-    buf_mark.goto_mark(char)
+    buf_mark.goto(char)
   end,
   { desc = 'Go to buffer mark' }
 )
 
 -- Explicitly mapped:
 -- If you know you are only going to use a fixed set of buffer marks then you can configure keymaps to reflect that.
-vim.keymap.set('n', '<leader>!', function() buf_mark.set_mark('1') end)
-vim.keymap.set('n', '<leader>1', function() buf_mark.goto_mark('1') end)
+vim.keymap.set('n', '<leader>!', function() buf_mark.set('1') end)
+vim.keymap.set('n', '<leader>1', function() buf_mark.goto('1') end)
 
-vim.keymap.set('n', '<leader>@', function() buf_mark.set_mark('2') end)
-vim.keymap.set('n', '<leader>2', function() buf_mark.goto_mark('2') end)
+vim.keymap.set('n', '<leader>@', function() buf_mark.set('2') end)
+vim.keymap.set('n', '<leader>2', function() buf_mark.goto('2') end)
 
-vim.keymap.set('n', '<leader>#', function() buf_mark.set_mark('3') end)
-vim.keymap.set('n', '<leader>3', function() buf_mark.goto_mark('3') end)
+vim.keymap.set('n', '<leader>#', function() buf_mark.set('3') end)
+vim.keymap.set('n', '<leader>3', function() buf_mark.goto('3') end)
 ```
 
 ## Commands
 
-### `:BufMarks`
+### `:BufMarkList`
 
 Lists all buffer marks with their associated files. The output displays:
 - Mark character
@@ -204,16 +204,16 @@ require("buf-mark").setup({
 })
 ```
 
-### `list_marks()`
+### `list()`
 
 Display all buffer marks with their associated buffer information.
 
 **Example:**
 ```lua
-require("buf-mark").list_marks()
+require("buf-mark").list()
 ```
 
-### `set_mark(char)`
+### `set(char)`
 
 Set a buffer mark for the current buffer.
 
@@ -222,10 +222,10 @@ Set a buffer mark for the current buffer.
 
 **Example:**
 ```lua
-require("buf-mark").set_mark('a')
+require("buf-mark").set('a')
 ```
 
-### `delete_mark(char)`
+### `delete(char)`
 
 Delete a buffer mark.
 
@@ -234,10 +234,10 @@ Delete a buffer mark.
 
 **Example:**
 ```lua
-require("buf-mark").delete_mark('a')
+require("buf-mark").delete('a')
 ```
 
-### `goto_mark(char)`
+### `goto(char)`
 
 Jump to the buffer associated with the given mark.
 
@@ -246,7 +246,7 @@ Jump to the buffer associated with the given mark.
 
 **Example:**
 ```lua
-require("buf-mark").goto_mark('a')
+require("buf-mark").goto('a')
 ```
 
 ### `delete_all()`

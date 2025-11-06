@@ -71,14 +71,14 @@ local function trigger_marks_changed_event()
 end
 
 -- Set a mark for a character to a filepath
-T.set_mark = function(char)
+T.set = function(char)
   T.marks[char] = vim.api.nvim_buf_get_name(0)
   save_marks()
   trigger_marks_changed_event()
 end
 
 -- Deletes a mark for a character to a filepath
-T.delete_mark = function(char)
+T.delete = function(char)
   T.marks[char] = nil
   save_marks()
   trigger_marks_changed_event()
@@ -92,7 +92,7 @@ T.delete_all = function()
 end
 
 -- Goes to the buffer associated with a character
-T.goto_mark = function(char)
+T.goto = function(char)
   local path = T.marks[char]
 
   if not path then
@@ -112,7 +112,7 @@ T.goto_mark = function(char)
 end
 
 -- Lists all buffer marks
-T.list_marks = function()
+T.list = function()
   -- Collect all marks and sort them
   local mark_list = {}
   for char, path in pairs(T.marks) do
@@ -178,8 +178,8 @@ T.setup = function(opts)
   })
 
   -- Register the :BufMarks command
-  vim.api.nvim_create_user_command('BufMarks', function()
-    T.list_marks()
+  vim.api.nvim_create_user_command('BufMarkList', function()
+    T.list()
   end, { desc = 'List all buffer marks' })
 
   -- Register the :BufMarkSet command
@@ -189,7 +189,7 @@ T.setup = function(opts)
       vim.api.nvim_echo({{"Please provide a single character", "ErrorMsg"}}, true, {})
       return
     end
-    T.set_mark(char)
+    T.set(char)
   end, { nargs = 1, desc = 'Set buffer mark for character' })
 
   -- Register the :BufMarkDelete command
@@ -199,7 +199,7 @@ T.setup = function(opts)
       vim.api.nvim_echo({{"Please provide a single character", "ErrorMsg"}}, true, {})
       return
     end
-    T.delete_mark(char)
+    T.delete(char)
   end, { nargs = 1, desc = 'Delete buffer mark for character' })
 
   -- Register the :BufMarkGoto command
@@ -209,7 +209,7 @@ T.setup = function(opts)
       vim.api.nvim_echo({{"Please provide a single character", "ErrorMsg"}}, true, {})
       return
     end
-    T.goto_mark(char)
+    T.goto(char)
   end, { nargs = 1, desc = 'Go to buffer mark for character' })
 
   -- Register the :BufMarkDeleteAll command
@@ -222,12 +222,12 @@ T.setup = function(opts)
   if opts.keymaps ~= false then
     vim.keymap.set('n', '<leader>m', function()
       local char = vim.fn.getcharstr()
-      T.set_mark(char)
+      T.set(char)
     end, { desc = 'Set buffer mark' })
 
     vim.keymap.set('n', "<leader>'", function()
       local char = vim.fn.getcharstr()
-      T.goto_mark(char)
+      T.goto(char)
     end, { desc = 'Go to buffer mark' })
   end
 end
