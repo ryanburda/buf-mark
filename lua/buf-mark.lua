@@ -220,15 +220,49 @@ T.setup = function(opts)
 
   -- Setup keymaps if not disabled
   if opts.keymaps ~= false then
-    vim.keymap.set('n', '<leader>m', function()
-      local char = vim.fn.getcharstr()
-      T.set(char)
-    end, { desc = 'Set buffer mark' })
+    vim.keymap.set(
+      'n',
+      '<leader>m',
+      function()
+        local char = vim.fn.getcharstr()
+        T.set(char)
+      end,
+      { desc = 'BufMark: Set' }
+    )
 
-    vim.keymap.set('n', "<leader>'", function()
-      local char = vim.fn.getcharstr()
-      T.goto(char)
-    end, { desc = 'Go to buffer mark' })
+    vim.keymap.set(
+      'n',
+      '<leader>M',
+      function()
+        local char = vim.fn.getcharstr()
+        T.delete(char)
+      end,
+      { desc = 'BufMark: Delete' }
+    )
+
+    vim.keymap.set(
+      'n',
+      "<leader>'",
+      function()
+        local char = vim.fn.getcharstr()
+        T.goto(char)
+      end,
+      { desc = 'BufMark: Goto' }
+    )
+
+    vim.keymap.set(
+      'n',
+      "<leader>''",
+      ':b#<cr>',
+      { desc = 'BufMark: Goto alternate buffer' }
+    )
+
+    vim.keymap.set(
+      'n',
+      "<leader>'\"",
+      T.list,
+      { desc = 'BufMark: List' }
+    )
   end
 end
 
