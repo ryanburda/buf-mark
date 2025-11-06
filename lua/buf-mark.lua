@@ -62,22 +62,33 @@ local function load_marks()
   end
 end
 
+-- Trigger a custom autocommand event when marks change
+local function trigger_marks_changed_event()
+  vim.api.nvim_exec_autocmds('User', {
+    pattern = 'BufMarkChanged',
+    modeline = false,
+  })
+end
+
 -- Set a mark for a character to a filepath
 T.set_mark = function(char)
   T.marks[char] = vim.api.nvim_buf_get_name(0)
   save_marks()
+  trigger_marks_changed_event()
 end
 
 -- Deletes a mark for a character to a filepath
 T.delete_mark = function(char)
   T.marks[char] = nil
   save_marks()
+  trigger_marks_changed_event()
 end
 
 -- Deletes all marks for the current project
 T.delete_all = function()
   T.marks = {}
   save_marks()
+  trigger_marks_changed_event()
 end
 
 -- Goes to the buffer associated with a character
