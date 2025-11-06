@@ -266,7 +266,6 @@ A custom User autocommand event that fires whenever the set of buffer marks chan
 
 **Use cases:**
 - Update a statusline component showing current marks
-- Sync marks to an external system
 - Display notifications when marks change
 - Implement custom mark visualization
 
@@ -288,24 +287,39 @@ vim.api.nvim_create_autocmd('User', {
 
 **Example - Update a custom statusline:**
 ```lua
--- Global variable to store mark count for statusline
-_G.buf_mark_count = 0
+-- Global variable to store current buffer's mark for statusline
+_G.buf_mark_current = ''
 
--- Update count whenever marks change
+-- Function to get the mark character for current buffer
+function _G.get_current_buffer_mark()
+  local buf_mark = require('buf-mark')
+  local current_file = vim.api.nvim_buf_get_name(0)
+  
+  for char, path in pairs(buf_mark.marks) do
+    if path == current_file then
+      return '[' .. char .. ']'
+    end
+  end
+  return ''
+end
+
+-- Update current buffer mark whenever marks change
 vim.api.nvim_create_autocmd('User', {
   pattern = 'BufMarkChanged',
   callback = function()
-    local buf_mark = require('buf-mark')
-    local count = 0
-    for _ in pairs(buf_mark.marks) do
-      count = count + 1
-    end
-    _G.buf_mark_count = count
+    _G.buf_mark_current = _G.get_current_buffer_mark()
   end,
 })
 
--- Use in statusline
-vim.o.statusline = '%f %m %=%{v:lua.buf_mark_count} marks'
+-- Also update when entering a buffer
+vim.api.nvim_create_autocmd('BufEnter', {
+  callback = function()
+    _G.buf_mark_current = _G.get_current_buffer_mark()
+  end,
+})
+
+-- Use in statusline - shows mark character if current buffer has one
+vim.o.statusline = '%f %m %=%{v:lua.buf_mark_current}'
 ```
 
 ## License
