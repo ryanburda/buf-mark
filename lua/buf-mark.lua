@@ -1,7 +1,7 @@
 local T = {}
 
--- Dictionary mapping single characters to file paths
-T.marks = {}
+-- Dictionary mapping single characters to file paths (private)
+local marks = {}
 
 -- Configuration options
 T.config = {
@@ -32,7 +32,7 @@ local function save_marks()
   local storage_path = get_storage_path()
   local data = {
     cwd = vim.fn.getcwd(),
-    marks = T.marks
+    marks = marks
   }
 
   local json_str = vim.json.encode(data)
@@ -57,7 +57,7 @@ local function load_marks()
   if content and content ~= '' then
     local ok, data = pcall(vim.json.decode, content)
     if ok and data and data.marks then
-      T.marks = data.marks
+      marks = data.marks
     end
   end
 end
@@ -72,28 +72,28 @@ end
 
 -- Set a mark for a character to a filepath
 T.set = function(char)
-  T.marks[char] = vim.api.nvim_buf_get_name(0)
+  marks[char] = vim.api.nvim_buf_get_name(0)
   save_marks()
   trigger_marks_changed_event()
 end
 
 -- Deletes a mark for a character to a filepath
 T.delete = function(char)
-  T.marks[char] = nil
+  marks[char] = nil
   save_marks()
   trigger_marks_changed_event()
 end
 
 -- Deletes all marks for the current project
 T.delete_all = function()
-  T.marks = {}
+  marks = {}
   save_marks()
   trigger_marks_changed_event()
 end
 
 -- Goes to the buffer associated with a character
 T.goto = function(char)
-  local path = T.marks[char]
+  local path = marks[char]
 
   if not path then
     vim.api.nvim_echo({{"Buffer Mark not set", "ErrorMsg"}}, true, {})
@@ -111,11 +111,16 @@ T.goto = function(char)
   end
 end
 
--- Lists all buffer marks
+-- Returns all buffer marks as a table
 T.list = function()
+  return marks
+end
+
+-- Lists all buffer marks with pretty formatting
+T.list_pretty = function()
   -- Collect all marks and sort them
   local mark_list = {}
-  for char, path in pairs(T.marks) do
+  for char, path in pairs(marks) do
     table.insert(mark_list, {char = char, path = path})
   end
 
@@ -179,7 +184,7 @@ T.setup = function(opts)
 
   -- Register the :BufMarks command
   vim.api.nvim_create_user_command('BufMarkList', function()
-    T.list()
+    T.list_pretty()
   end, { desc = 'List all buffer marks' })
 
   -- Register the :BufMarkSet command
@@ -260,7 +265,7 @@ T.setup = function(opts)
     vim.keymap.set(
       'n',
       "<leader>'\"",
-      T.list,
+      T.list_pretty,
       { desc = 'BufMark: List' }
     )
   end

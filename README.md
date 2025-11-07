@@ -244,11 +244,26 @@ require("buf-mark").setup({
 
 ### `list()`
 
-Display all buffer marks with their associated buffer information.
+Returns all buffer marks as a table mapping characters to file paths.
+
+**Returns:**
+- `table`: A table where keys are mark characters and values are file paths
 
 **Example:**
 ```lua
-require("buf-mark").list()
+local marks = require("buf-mark").list()
+for char, path in pairs(marks) do
+  print("Mark " .. char .. " -> " .. path)
+end
+```
+
+### `list_pretty()`
+
+Display all buffer marks with their associated buffer information in a formatted view.
+
+**Example:**
+```lua
+require("buf-mark").list_pretty()
 ```
 
 ### `set(char)`
@@ -314,8 +329,9 @@ vim.api.nvim_create_autocmd('User', {
   pattern = 'BufMarkChanged',
   callback = function()
     local buf_mark = require('buf-mark')
+    local marks = buf_mark.list()
     local count = 0
-    for _ in pairs(buf_mark.marks) do
+    for _ in pairs(marks) do
       count = count + 1
     end
     print('Buffer marks changed. Total marks: ' .. count)
@@ -332,8 +348,9 @@ _G.buf_mark_current = ''
 function _G.get_current_buffer_mark()
   local buf_mark = require('buf-mark')
   local current_file = vim.api.nvim_buf_get_name(0)
+  local marks = buf_mark.list()
   
-  for char, path in pairs(buf_mark.marks) do
+  for char, path in pairs(marks) do
     if path == current_file then
       return '[' .. char .. ']'
     end
