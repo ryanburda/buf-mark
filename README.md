@@ -377,6 +377,40 @@ vim.api.nvim_create_autocmd('BufEnter', {
 vim.o.statusline = '%f %m %=%{v:lua.buf_mark_current}'
 ```
 
+## Extras
+
+### `buf-mark.extras.info`
+
+The `buf-mark.extras.info` module provides a function to display buffer marks for currently open buffers. This is useful for integrating buf-mark information into statuslines, tablines, or other UI components.
+
+**Features:**
+- Shows marks for buffers that are currently open
+- Highlights the current buffer's mark
+- Indicates if the current buffer doesn't have a mark
+- Marks are displayed in alphabetical order
+- Uses Vim highlight groups for visual distinction
+
+#### Usage with custom statusline
+
+```lua
+vim.o.statusline = '%f %m %=%{v:lua.require("buf-mark.extras.info").get()}'
+```
+
+#### Usage with lualine
+
+```lua
+require('lualine').setup({
+  sections = {
+    lualine_a = {require('buf-mark.extras.info').get},
+  }
+})
+```
+
+The function returns a formatted string with highlight groups:
+- `%#TabLineSel#` for the current buffer's mark (if marked)
+- `%#TabLine#` for other buffer marks
+- `%#DiffText#` for unmarked current buffer indicator
+
 ## License
 
 MIT
