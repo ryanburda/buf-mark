@@ -385,16 +385,20 @@ The `buf-mark.status` module provides a function to display buffer marks for cur
 This is useful for integrating buf-mark information into statuslines, tablines, or other UI components.
 
 **Features:**
-- Shows marks for buffers that are currently open
-- Highlights the current buffer's mark
-- Indicates if the current buffer doesn't have a mark
-- Marks are displayed in alphabetical order
-- Uses Vim highlight groups for visual distinction
+- Shows marks in alphabetical order, highlighting the current buffers mark
 
-#### Usage with custom statusline
+  ![](./docs/status1.jpg)
+
+  ![](./docs/status2.jpg)
+
+- Indicates if the current buffer doesn't have a mark
+
+  ![](./docs/status3.jpg)
+
+#### Usage with statusline
 
 ```lua
-vim.o.statusline = '%f %m %=%{%v:lua.require("buf-mark.status").get()%}'
+vim.o.statusline = '%{%v:lua.require("buf-mark.status").get()%} %f %m'
 ```
 
 #### Usage with lualine
@@ -406,11 +410,6 @@ require('lualine').setup({
   }
 })
 ```
-
-The function returns a formatted string with highlight groups:
-- `%#TabLineSel#` for the current buffer's mark (if marked)
-- `%#TabLine#` for other buffer marks
-- `%#DiffText#` for unmarked current buffer indicator
 
 ## License
 
