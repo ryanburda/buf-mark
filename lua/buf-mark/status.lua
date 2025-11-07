@@ -53,7 +53,7 @@ local function update()
     s = s .. '%#DiffText#  '
   end
 
-  Info = s
+  Info = s .. '%*'
 end
 
 function M.setup()
