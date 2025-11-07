@@ -270,6 +270,9 @@ T.setup = function(opts)
     )
   end
 
+  -- status setup
+  require('buf-mark.status').setup()
+
 end
 
 return T

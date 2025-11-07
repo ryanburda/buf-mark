@@ -377,11 +377,12 @@ vim.api.nvim_create_autocmd('BufEnter', {
 vim.o.statusline = '%f %m %=%{v:lua.buf_mark_current}'
 ```
 
-## Extras
+## Status
 
-### `buf-mark.extras.info`
+### `buf-mark.status`
 
-The `buf-mark.extras.info` module provides a function to display buffer marks for currently open buffers. This is useful for integrating buf-mark information into statuslines, tablines, or other UI components.
+The `buf-mark.status` module provides a function to display buffer marks for currently open buffers.
+This is useful for integrating buf-mark information into statuslines, tablines, or other UI components.
 
 **Features:**
 - Shows marks for buffers that are currently open
@@ -393,7 +394,7 @@ The `buf-mark.extras.info` module provides a function to display buffer marks fo
 #### Usage with custom statusline
 
 ```lua
-vim.o.statusline = '%f %m %=%{v:lua.require("buf-mark.extras.info").get()}'
+vim.o.statusline = '%f %m %=%{%v:lua.require("buf-mark.status").get()%}'
 ```
 
 #### Usage with lualine
@@ -401,7 +402,7 @@ vim.o.statusline = '%f %m %=%{v:lua.require("buf-mark.extras.info").get()}'
 ```lua
 require('lualine').setup({
   sections = {
-    lualine_a = {require('buf-mark.extras.info').get},
+    lualine_a = {require('buf-mark.status').get},
   }
 })
 ```

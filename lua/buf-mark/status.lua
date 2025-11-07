@@ -7,7 +7,9 @@ Shows buf-marks for buffers that are currently open.
 ]]
 local M = {}
 
-function M.get()
+Info = ''
+
+local function update()
   local s = ''
 
   -- Get buf-marks
@@ -51,7 +53,23 @@ function M.get()
     s = s .. '%#DiffText#  '
   end
 
-  return s
+  Info = s
+end
+
+function M.setup()
+  -- Listen for specific events to know when to update.
+  vim.api.nvim_create_autocmd('User', {
+    pattern = 'BufMarkChanged',
+    callback = update
+  })
+
+  vim.api.nvim_create_autocmd('BufEnter', {
+    callback = update
+  })
+end
+
+function M.get()
+  return Info
 end
 
 return M
