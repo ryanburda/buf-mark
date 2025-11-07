@@ -75,19 +75,20 @@ T.set = function(char)
   marks[char] = vim.api.nvim_buf_get_name(0)
   save_marks()
   trigger_marks_changed_event()
+  vim.api.nvim_echo({{"buf-mark set: " .. char, "Normal"}}, true, {})
 end
 
 -- Deletes a mark for a character to a filepath
 T.delete = function(char)
   if not marks[char] then
-    vim.api.nvim_echo({{"buf-mark not set: " .. char, "ErrorMsg"}}, true, {})
+    vim.api.nvim_echo({{"buf-mark not set: " .. char, "WarningMsg"}}, true, {})
     return
   end
 
   marks[char] = nil
   save_marks()
   trigger_marks_changed_event()
-  vim.api.nvim_echo({{"buf-mark deleted: " .. char, "ErrorMsg"}}, true, {})
+  vim.api.nvim_echo({{"buf-mark deleted: " .. char, "Normal"}}, true, {})
 end
 
 -- Deletes all marks for the current project
@@ -95,7 +96,7 @@ T.delete_all = function()
   marks = {}
   save_marks()
   trigger_marks_changed_event()
-  vim.api.nvim_echo({{"buf-mark deleted all", "ErrorMsg"}}, true, {})
+  vim.api.nvim_echo({{"buf-mark deleted all", "Normal"}}, true, {})
 end
 
 -- Goes to the buffer associated with a character
@@ -103,7 +104,7 @@ T.goto = function(char)
   local path = marks[char]
 
   if not path then
-    vim.api.nvim_echo({{"buf-mark not set: " .. char, "ErrorMsg"}}, true, {})
+    vim.api.nvim_echo({{"buf-mark not set: " .. char, "WarningMsg"}}, true, {})
     return
   end
 
