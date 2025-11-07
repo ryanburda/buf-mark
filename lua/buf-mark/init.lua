@@ -79,9 +79,15 @@ end
 
 -- Deletes a mark for a character to a filepath
 T.delete = function(char)
+  if not marks[char] then
+    vim.api.nvim_echo({{"buf-mark not set: " .. char, "ErrorMsg"}}, true, {})
+    return
+  end
+
   marks[char] = nil
   save_marks()
   trigger_marks_changed_event()
+  vim.api.nvim_echo({{"buf-mark deleted: " .. char, "ErrorMsg"}}, true, {})
 end
 
 -- Deletes all marks for the current project
@@ -89,6 +95,7 @@ T.delete_all = function()
   marks = {}
   save_marks()
   trigger_marks_changed_event()
+  vim.api.nvim_echo({{"buf-mark deleted all", "ErrorMsg"}}, true, {})
 end
 
 -- Goes to the buffer associated with a character
@@ -96,7 +103,7 @@ T.goto = function(char)
   local path = marks[char]
 
   if not path then
-    vim.api.nvim_echo({{"Buffer Mark not set", "ErrorMsg"}}, true, {})
+    vim.api.nvim_echo({{"buf-mark not set: " .. char, "ErrorMsg"}}, true, {})
     return
   end
 
@@ -128,7 +135,7 @@ T.list_pretty = function()
   table.sort(mark_list, function(a, b) return a.char < b.char end)
 
   if #mark_list == 0 then
-    vim.api.nvim_echo({{"No buffer marks set", "WarningMsg"}}, true, {})
+    vim.api.nvim_echo({{"No buf-marks set", "WarningMsg"}}, true, {})
     return
   end
 
@@ -220,7 +227,6 @@ T.setup = function(opts)
   -- Register the :BufMarkDeleteAll command
   vim.api.nvim_create_user_command('BufMarkDeleteAll', function()
     T.delete_all()
-    vim.api.nvim_echo({{"All buffer marks deleted", "WarningMsg"}}, true, {})
   end, { desc = 'Delete all buffer marks for current project' })
 
   -- Setup keymaps if not disabled
