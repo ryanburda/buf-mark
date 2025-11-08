@@ -33,18 +33,6 @@ you jump to a buffer mark the cursor position is automatically restored to where
 | **Persistence** | Lost when buffer is deleted | Optionally persists across sessions |
 | **Use Case** | Bookmarking locations within files | Quick buffer switching |
 
-### Differences from Harpoon
-
-While both buf-mark and [Harpoon](https://github.com/ThePrimeagen/harpoon) solve the buffer navigation problem, they take different approaches:
-
-| Feature | Harpoon | buf-mark |
-|---------|---------|----------|
-| **Organization** | Ordered list (1, 2, 3...) | Character-based mapping (a, b, c...) |
-| **Navigation** | Navigate by position in list | Navigate by mnemonic character |
-| **Maintenance** | Manual ordering and list management | Set and forget individual marks |
-| **Memory Aid** | Remember position in list | Remember meaningful character associations |
-| **Flexibility** | Fixed positions, requires reordering | Independent marks, no ordering constraints |
-
 ## Usage
 
 ### Default Keymaps
@@ -96,79 +84,13 @@ use {
 
 ```lua
 require("buf-mark").setup({
-  -- Set to false to disable default keymaps
+  -- Set to true to enable default keymaps
   keymaps = true,
-  -- Set to true to persist marks between Neovim sessions
+  -- Set to true to persist marks between Neovim sessions.
   -- Marks will be saved per working directory
+  -- (e.g., marks in ~/project-a are separate from ~/project-b)
   persist = true,
 })
-```
-
-#### Buffer Mark Persistence
-
-Enable buffer marks to be saved between Neovim sessions:
-
-```lua
-require("buf-mark").setup({
-  persist = true,
-})
-```
-
-When enabled:
-- Marks are automatically saved when set or deleted
-- Marks are loaded when the plugin initializes
-- Each working directory has its own set of marks (e.g., marks in `~/project-a` are separate from `~/project-b`)
-- Marks are stored in `~/.local/share/nvim/buf-mark/` as JSON files
-
-### Custom Keymaps
-
-If you prefer custom keymaps, disable the defaults and set your own:
-
-```lua
-require("buf-mark").setup({
-  keymaps = false,
-})
-
-local buf_mark = require("buf-mark")
-
--- Custom Keymap Examples
---
--- Dynamically mapped:
--- Similar to the default keymaps, this uses `vim.fn.getcharstr()` to
--- get the buffer mark character after invoking the keymap.
--- `<leader>B{char}` to set a buffer mark
-vim.keymap.set(
-  'n',
-  '<leader>B', function()
-    -- The next character typed will be the character the buffer mark is mapped to
-    local char = vim.fn.getcharstr()
-    buf_mark.set(char)
-  end,
-  { desc = "Set buffer mark" }
-)
--- `<leader>b{char}` to go to a buffer mark
-vim.keymap.set(
-  'n',
-  '<leader>b',
-  function()
-    -- The next character typed will be the buffer mark to go to
-    local char = vim.fn.getcharstr()
-    buf_mark.goto(char)
-  end,
-  { desc = 'Go to buffer mark' }
-)
-
--- Explicitly mapped:
--- If you know you are only going to use a fixed set of buffer
--- marks -- then you can configure keymaps to reflect that.
-vim.keymap.set('n', '<leader>!', function() buf_mark.set('1') end)
-vim.keymap.set('n', '<leader>1', function() buf_mark.goto('1') end)
-
-vim.keymap.set('n', '<leader>@', function() buf_mark.set('2') end)
-vim.keymap.set('n', '<leader>2', function() buf_mark.goto('2') end)
-
-vim.keymap.set('n', '<leader>#', function() buf_mark.set('3') end)
-vim.keymap.set('n', '<leader>3', function() buf_mark.goto('3') end)
 ```
 
 ## Commands
@@ -320,62 +242,7 @@ A custom User autocommand event that fires whenever the set of buffer marks chan
 **Use cases:**
 - Update a statusline component showing current marks
 - Display notifications when marks change
-- Implement custom mark visualization
-
-**Example:**
-```lua
--- Listen for mark changes and print a message
-vim.api.nvim_create_autocmd('User', {
-  pattern = 'BufMarkChanged',
-  callback = function()
-    local buf_mark = require('buf-mark')
-    local marks = buf_mark.list()
-    local count = 0
-    for _ in pairs(marks) do
-      count = count + 1
-    end
-    print('Buffer marks changed. Total marks: ' .. count)
-  end,
-})
-```
-
-**Example - Update a custom statusline:**
-```lua
--- Global variable to store current buffer's mark for statusline
-_G.buf_mark_current = ''
-
--- Function to get the mark character for current buffer
-function _G.get_current_buffer_mark()
-  local buf_mark = require('buf-mark')
-  local current_file = vim.api.nvim_buf_get_name(0)
-  local marks = buf_mark.list()
-  
-  for char, path in pairs(marks) do
-    if path == current_file then
-      return '[' .. char .. ']'
-    end
-  end
-  return ''
-end
-
--- Update current buffer mark whenever marks change
-vim.api.nvim_create_autocmd('User', {
-  pattern = 'BufMarkChanged',
-  callback = function()
-    _G.buf_mark_current = _G.get_current_buffer_mark()
-  end,
-})
-
--- Also update when entering a buffer
-vim.api.nvim_create_autocmd('BufEnter', {
-  callback = function()
-    _G.buf_mark_current = _G.get_current_buffer_mark()
-  end,
-})
-
--- Use in statusline - shows mark character if current buffer has one
-vim.o.statusline = '%f %m %=%{v:lua.buf_mark_current}'
-```
+- Implement custom mark visualization similar to [Status](#status) shown below
 
 ## Status
 
