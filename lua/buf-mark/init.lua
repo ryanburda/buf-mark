@@ -70,8 +70,21 @@ local function trigger_marks_changed_event()
   })
 end
 
+-- Check if input is a single character
+local function input_checker(char)
+  if not char or type(char) ~= 'string' or #char ~= 1 then
+    vim.api.nvim_echo({{"Please provide a single character mark", "ErrorMsg"}}, true, {})
+    return false
+  end
+  return true
+end
+
 -- Set a mark for a character to a filepath
 T.set = function(char)
+  if not input_checker(char) then
+    return
+  end
+
   marks[char] = vim.api.nvim_buf_get_name(0)
   save_marks()
   trigger_marks_changed_event()
@@ -80,6 +93,10 @@ end
 
 -- Deletes a mark for a character to a filepath
 T.delete = function(char)
+  if not input_checker(char) then
+    return
+  end
+
   if not marks[char] then
     vim.api.nvim_echo({{"buf-mark not set: " .. char, "WarningMsg"}}, true, {})
     return
@@ -101,6 +118,10 @@ end
 
 -- Goes to the buffer associated with a character
 T.goto = function(char)
+  if not input_checker(char) then
+    return
+  end
+
   local path = marks[char]
 
   if not path then
@@ -197,32 +218,17 @@ T.setup = function(opts)
 
   -- Register the :BufMarkSet command
   vim.api.nvim_create_user_command('BufMarkSet', function(opts)
-    local char = opts.args
-    if char == '' or #char ~= 1 then
-      vim.api.nvim_echo({{"Please provide a single character", "ErrorMsg"}}, true, {})
-      return
-    end
-    T.set(char)
+    T.set(opts.args)
   end, { nargs = 1, desc = 'Set buffer mark for character' })
 
   -- Register the :BufMarkDelete command
   vim.api.nvim_create_user_command('BufMarkDelete', function(opts)
-    local char = opts.args
-    if char == '' or #char ~= 1 then
-      vim.api.nvim_echo({{"Please provide a single character", "ErrorMsg"}}, true, {})
-      return
-    end
-    T.delete(char)
+    T.delete(opts.args)
   end, { nargs = 1, desc = 'Delete buffer mark for character' })
 
   -- Register the :BufMarkGoto command
   vim.api.nvim_create_user_command('BufMarkGoto', function(opts)
-    local char = opts.args
-    if char == '' or #char ~= 1 then
-      vim.api.nvim_echo({{"Please provide a single character", "ErrorMsg"}}, true, {})
-      return
-    end
-    T.goto(char)
+    T.goto(opts.args)
   end, { nargs = 1, desc = 'Go to buffer mark for character' })
 
   -- Register the :BufMarkDeleteAll command
