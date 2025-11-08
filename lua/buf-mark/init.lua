@@ -211,15 +211,15 @@ T.setup = function(opts)
     end,
   })
 
-  -- Setup user commands
-  require('buf-mark.user_commands').setup_user_commands()
+  -- user commands
+  require('buf-mark.user_commands').setup()
 
-  -- status setup
+  -- status
   require('buf-mark.status').setup()
 
-  -- Setup keymaps if not disabled
+  -- default keymaps
   if opts.keymaps ~= false then
-    require('buf-mark.keymaps').set_default_keymaps()
+    require('buf-mark.default_keymaps').setup()
   end
 
 end

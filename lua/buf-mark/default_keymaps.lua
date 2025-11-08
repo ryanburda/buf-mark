@@ -1,6 +1,6 @@
-T = {}
+local T = {}
 
-T.set_default_keymaps = function()
+T.setup = function()
   local buf_mark = require('buf-mark')
 
   vim.keymap.set(

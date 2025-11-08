@@ -1,6 +1,6 @@
-T = {}
+local T = {}
 
-T.setup_user_commands = function()
+T.setup = function()
   local buf_mark = require('buf-mark')
 
   -- Register the :BufMarkList command
