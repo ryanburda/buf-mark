@@ -211,38 +211,16 @@ T.setup = function(opts)
     end,
   })
 
-  -- Register the :BufMarks command
-  vim.api.nvim_create_user_command('BufMarkList', function()
-    T.list_pretty()
-  end, { desc = 'List all buffer marks' })
+  -- Setup user commands
+  require('buf-mark.user_commands').setup_user_commands()
 
-  -- Register the :BufMarkSet command
-  vim.api.nvim_create_user_command('BufMarkSet', function(opts)
-    T.set(opts.args)
-  end, { nargs = 1, desc = 'Set buffer mark for character' })
-
-  -- Register the :BufMarkDelete command
-  vim.api.nvim_create_user_command('BufMarkDelete', function(opts)
-    T.delete(opts.args)
-  end, { nargs = 1, desc = 'Delete buffer mark for character' })
-
-  -- Register the :BufMarkGoto command
-  vim.api.nvim_create_user_command('BufMarkGoto', function(opts)
-    T.goto(opts.args)
-  end, { nargs = 1, desc = 'Go to buffer mark for character' })
-
-  -- Register the :BufMarkDeleteAll command
-  vim.api.nvim_create_user_command('BufMarkDeleteAll', function()
-    T.delete_all()
-  end, { desc = 'Delete all buffer marks for current project' })
+  -- status setup
+  require('buf-mark.status').setup()
 
   -- Setup keymaps if not disabled
   if opts.keymaps ~= false then
     require('buf-mark.keymaps').set_default_keymaps()
   end
-
-  -- status setup
-  require('buf-mark.status').setup()
 
 end
 
