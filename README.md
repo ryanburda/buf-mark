@@ -17,6 +17,8 @@ Both approaches have limitations:
 Unlike vim's traditional marks which remember positions within a file, buffer marks remember entire buffers. When
 you jump to a buffer mark the cursor position is automatically restored to where you last left it.
 
+![](./docs/buf-mark.gif)
+
 ### Features
 - **Buffer Marks**: Set marks to buffers using single characters (similar to vim's global marks)
 - **Cursor Position Preservation**: Automatically saves and restores cursor position when leaving and entering marked buffers
