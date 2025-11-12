@@ -23,7 +23,7 @@ local function update()
   -- Get buffers
   local open_bufs = {}
   for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
-    if vim.api.nvim_buf_is_loaded(bufnr) and vim.bo[bufnr].buflisted then
+    if vim.api.nvim_buf_is_loaded(bufnr) then
       table.insert(open_bufs, bufnr)
     end
   end
