@@ -50,7 +50,7 @@ local function update()
 
   -- Show current buffer if not already shown
   if not current_buf_is_marked then
-    s = s .. '%#DiffText#  '
+    s = s .. '%#TabLineSel#  '
   end
 
   Info = s .. '%*'
