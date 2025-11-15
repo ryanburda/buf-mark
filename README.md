@@ -45,8 +45,8 @@ The default keymaps mirror native marks but are prefixed with `<leader>`:
 |--------|----------|
 | `<leader>m{char}` | Set buffer mark `{char}` for the current buffer |
 | `<leader>'{char}` | Jump to buffer mark `{char}` |
-| `<leader>''`      | Jump to the alternate buffer |
-| `<leader>'"`      | List buffer marks |
+| `<leader>'/`      | Jump to the alternate buffer |
+| `<leader>'?`      | List buffer marks |
 | `<leader>M{char}` | Delete buffer mark `{char}` |
 
 ### Example Workflow

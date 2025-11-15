@@ -38,14 +38,14 @@ T.setup = function()
 
   vim.keymap.set(
     'n',
-    "<leader>''",
+    "<leader>'/",
     ':b#<cr>',
     { desc = 'BufMark: Goto alternate buffer' }
   )
 
   vim.keymap.set(
     'n',
-    "<leader>'\"",
+    "<leader>'?",
     buf_mark.list_pretty,
     { desc = 'BufMark: List' }
   )
