@@ -35,6 +35,14 @@ you jump to a buffer mark the cursor position is automatically restored to where
 | **Persistence** | Lost when buffer is deleted | Optionally persists across sessions |
 | **Use Case** | Bookmarking locations within files | Quick buffer switching |
 
+### Do I need this plugin?
+
+Native Vim marks can actually be used to achieve similar buffer-switching behavior. For a simple,
+lightweight alternative that doesn't require a plugin, see [Using Native Marks](docs/using_native_marks.md).
+
+This plugin provides additional features like mark persistence across sessions and status line integrations,
+but the native marks approach may be sufficient for many workflows.
+
 ## Usage
 
 ### Default Keymaps
