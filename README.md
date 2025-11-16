@@ -103,6 +103,9 @@ require("buf-mark").setup({
 })
 ```
 
+For an alternative keymap configuration that repurposes native local mark keybindings for
+buf-marks, see [Author's Keymap Preferences](docs/authors_keymaps.md).
+
 ## Commands
 
 ### `:BufMarkList`
