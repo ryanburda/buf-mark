@@ -33,8 +33,8 @@ Vim automatically keeps track of several marks for you.
   - `.` - Position of last change
 
 ### Difference between `'` and `` ` `` when jumping to marks
-Backtick (`` ` ``) jumps to the exact position (line and column) where the mark was set, while
-single quote (`'`) jumps to the first non-blank character of that line.
+Backtick (`` `{mark} ``) jumps to the exact position (line and column) where the mark was set, while
+single quote (`'{mark}`) jumps to the first non-blank character of that line.
 - Use backtick for precise positioning `<--- even more foreshadowing!!`
 - Use single quote when you only care about getting to the right line
 
@@ -52,9 +52,9 @@ And you set mark `a` when your cursor is on the `m` in `myVariable` (shown by `^
 
 Both commands take you to the same line, but backtick preserves the exact column position while single quote moves to the start of the actual content.
 
-### Solution
+## Solution 1
 This means we can use a combination of:
-- Global marks
+- Global marks (A-Z)
 - The `"` mark
 - precise positioning, `` ` ``, when jumping to marks
 
@@ -66,14 +66,17 @@ For example:
     - `'A` jumps to global mark `A`
     - `` `" `` jumps to the exact cursor position when last exiting the file
 
-### Problems
-Jumping between buffers should be easy since we plan on doing it often. The mark
-based solution of typing `` '{mark}`" `` requires a bit of keyboard gymnastics.
+#### Problems
+Jumping between buffers should be easy since we plan on doing it often. This
+solution of typing `` '{mark}`" `` requires a bit of keyboard gymnastics.
 
 ... we can do better
 
-### A Simple Keymap
-We can create a keymap to make `'{mark}` perform `` '{mark}'` `` for us to make it more ergonomic.
+## Solution 2
+We can create a keymap to make `` '{mark}'` `` more ergonomic.
+
+There are several ways this can be done. The following chooses to make `'{mark}` perform `` '{mark}'` `` for
+us (for global marks only), though other keymaps that don't override default behavior can be created as well.
 
 ```lua
 vim.keymap.set(
@@ -118,14 +121,33 @@ like "buffer marks".
 **NOTE:** If you want to jump to the exact location of a global mark you can still use `` `<mark> ``.
 
 
-## The why use `buf-mark`?
+## Then why use `buf-mark`?
 
 If marks work just fine, why should I use this plugin?
  
 Sometimes the simple solution is the best solution. The keymap above acomplishes
-what most people need and is what I recommend for most cases.
+what most people need and is what I recommend for simple cases.
 
-`buf-mark` should only be used if you think you'll take advantage of any of the following features:
-- buf-mark persistence across sessions on a working directory level
-- a buffer marking solution that is **not** built upon marks so that marks can continue to be used in the way they were intended 
-- simple UI integrations with the built in [status](../README.md#status)
+The main annoyance I have with global marks is how they are persisted between nvim instances.
+While, global marks are not shared between different running instances of Vim (a good thing),
+they are persisted to the `.viminfo` (or `.shada` for Neovim) file **when you quit Vim**. When you
+start a new Vim instance, it reads the global marks from this file, which creates the appearance
+of sharing marks across sessions - but it's actually sequential persistence, not real-time sharing.
+
+Key points:
+- During runtime: Two simultaneously running Vim instances do not share marks in real-time.
+Each has its own independent mark state.
+- Between sessions: Global marks are saved when you quit Vim and loaded when you start Vim,
+so marks set in one session will be available in the next session (but only after the previous
+instance has exited and written to viminfo).
+- Conflicts: If you run two Vim instances simultaneously and set different global marks in each,
+**whichever instance quits last will have its marks saved to viminfo**, potentially overwriting marks
+set by the other instance.
+
+`buf-mark` solves this problem by persisting buf-marks across sessions on a working directory level.
+This means buf-marks made in `~/project_a` are separate from `~/project_b` which is a more sensible
+and predictable default.
+
+`buf-mark` also:
+- ships with UI integrations like [status](../README.md#status)
+- provides a buffer marking solution that is **not** built upon marks so that marks can continue to be used in the way they were intended 
