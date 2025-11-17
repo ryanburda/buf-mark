@@ -261,8 +261,15 @@ A custom User autocommand event that fires whenever the set of buffer marks chan
 
 ### `buf-mark.status`
 
-The `buf-mark.status` module provides a function to display buffer marks for currently open buffers.
+The `buf-mark.status` module provides a function to display buf-marks **for currently open buffers**.
 This is useful for integrating buf-mark information into statuslines, tablines, or other UI components.
+
+**Why only show marks for open buffers?**
+
+Over time, you'll accumulate marks for many buffers across your project. Displaying all marks would create
+visual clutter and make it harder to find the information you need. By showing only marks for currently open
+buffers, the status display provides focus and context for the specific problem you're working on right now.
+If you need to see all marks, you can list them separately using `:BufMarkList`.
 
 **Features:**
 - Shows marks in alphabetical order, highlighting the current buffers mark
