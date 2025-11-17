@@ -12,15 +12,15 @@ This keymap configuration repurposes the local mark keybindings for buf-marks in
 ## Keymap Strategy
 
 - `m{lowercase}` - Set a buf-mark
-- `m{other}` - Set a native global mark (normal behavior)
+- `m{other}` - Set a native, non-local, mark (normal behavior)
 - `'{lowercase}` - Jump to a buf-mark
-- `'{other}` - Jump to a native mark (normal behavior)
+- `'{other}` - Jump to a native, non-local, mark (normal behavior)
 - `M{lowercase}` - Delete a buf-mark
-- `M{other}` - Delete a native mark
+- `M{other}` - Delete a native, non-local, mark
 - `'/` - Jump to alternate buffer
 - `'?` - List all buf-marks
-- `<leader>m{char}` - Set a native mark (fallback for local marks if needed)
-- `<leader>'{char}` - Jump to a native mark (fallback for local marks if needed)
+- `<leader>m{char}` - Set a native local mark (fallback for local marks if needed)
+- `<leader>'{char}` - Jump to a native local mark (fallback for local marks if needed)
 
 ## Implementation
 

@@ -125,10 +125,10 @@ like "buffer marks".
 
 If marks work just fine, why should I use this plugin?
  
-Sometimes the simple solution is the best solution. The keymap above acomplishes
+Sometimes the simple solution is the best solution. The solutions above acomplish
 what most people need and is what I recommend for simple cases.
 
-The main annoyance I have with global marks is how they are persisted between nvim instances.
+One thing I find a bit tricky about global marks is how they are persisted between nvim instances.
 While, global marks are not shared between different running instances of Vim (a good thing),
 they are persisted to the `.viminfo` (or `.shada` for Neovim) file **when you quit Vim**. When you
 start a new Vim instance, it reads the global marks from this file, which creates the appearance
@@ -145,9 +145,10 @@ instance has exited and written to viminfo).
 set by the other instance.
 
 `buf-mark` solves this problem by persisting buf-marks across sessions on a working directory level.
-This means buf-marks made in `~/project_a` are separate from `~/project_b` which is a more sensible
-and predictable default.
+This means buf-marks made in `~/project_a` are separate from `~/project_b` which is a more intuitive 
+and predictable default when your workflow involves having a Neovim instance open per project.
 
 `buf-mark` also:
 - ships with UI integrations like [status](../README.md#status)
-- provides a buffer marking solution that is **not** built upon marks so that marks can continue to be used in the way they were intended 
+- provides a buffer marking solution that is **not** built upon marks so that marks can continue
+to be used in the way they were intended
