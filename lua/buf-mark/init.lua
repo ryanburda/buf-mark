@@ -72,7 +72,7 @@ end
 
 -- Check if input is a single character
 local function input_checker(char)
-  if not char or type(char) ~= 'string' or #char ~= 1 then
+  if not char or type(char) ~= 'string' or vim.fn.strcharlen(char) ~= 1 then
     vim.api.nvim_echo({{"Please provide a single character mark", "ErrorMsg"}}, true, {})
     return false
   end
