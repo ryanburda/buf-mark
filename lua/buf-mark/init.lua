@@ -131,8 +131,8 @@ T.goto = function(char)
 
   local bufnr = vim.fn.bufnr(path)
 
-  if bufnr ~= -1 then
-    -- If the buffer exists, switch to it
+  if bufnr ~= -1 and vim.api.nvim_buf_is_loaded(bufnr) then
+    -- If the buffer exists and is loaded, switch to it
     vim.api.nvim_set_current_buf(bufnr)
   else
     -- Otherwise, open the file in a new buffer
