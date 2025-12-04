@@ -7,17 +7,21 @@ This document describes an alternative keymap configuration that I prefer, which
 In typical Neovim usage, I rarely find myself using local marks. Most of the time I only mark a few locations per
 session and want to be able to jump to those marks from any buffer. This is why I generally prefer global marks.
 
-This keymap configuration repurposes the local mark keybindings for buf-marks instead, making buffer navigation more ergonomic.
+Similarly, I don't find Vim's automatic marks 1-9 useful since they require remembering the order files
+were exited. Mark 0 (last exit location) however is useful.
+
+This keymap configuration repurposes the local mark and automatic mark 1-9 keybindings for buf-marks instead,
+making buffer navigation more ergonomic.
 
 ## Keymap Strategy
 
-- `m{lowercase}` - Set a buf-mark
+- `m{lowercase1-9}` - Set a buf-mark
 - `m{other}` - Set a native, non-local, mark (normal behavior)
-- `'{lowercase}` - Jump to a buf-mark
+- `'{lowercase1-9}` - Jump to a buf-mark
 - `'{other}` - Jump to a native, non-local, mark (normal behavior)
-- `M{lowercase}` - Delete a buf-mark
+- `M{lowercase1-9}` - Delete a buf-mark
 - `M{other}` - Delete a native, non-local, mark
-- `'/` - Jump to alternate buffer
+- `'<Tab>` - Jump to alternate buffer
 - `'?` - List all buf-marks
 - `<leader>m{char}` - Set a native local mark (fallback for local marks if needed)
 - `<leader>'{char}` - Jump to a native local mark (fallback for local marks if needed)
@@ -30,7 +34,7 @@ vim.keymap.set(
   'm',
   function()
     local char = vim.fn.getcharstr()
-    if char:match("%l") then
+    if char:match("[%l1-9]") then
       -- set a buf-mark
       require('buf-mark').set(char)
     else
@@ -50,7 +54,7 @@ vim.keymap.set(
   "'",
   function()
     local char = vim.fn.getcharstr()
-    if char:match("%l") then
+    if char:match("[%l1-9]") then
       -- goto a buf-mark
       require('buf-mark').goto(char)
     else
@@ -70,7 +74,7 @@ vim.keymap.set(
   'M',
   function()
     local char = vim.fn.getcharstr()
-    if char:match("%l") then
+    if char:match("[%l1-9]") then
       -- delete a buf-mark
       require('buf-mark').delete(char)
     else
@@ -85,11 +89,9 @@ vim.keymap.set(
   { desc = 'Delete buf-mark/global mark' }
 )
 
--- `/` and `?` are in the same area of the keyboard as some
--- of the other vim-maintained marks so this feels right.
 vim.keymap.set(
   'n',
-  "'/",
+  "'<Tab>",
   ':b#<cr>',
   { desc = 'Alternate buffer' }
 )
@@ -101,7 +103,7 @@ vim.keymap.set(
   { desc = 'List buf-marks' }
 )
 
--- set these just in case you need local marks
+-- Keep keymaps around for local marks just in case.
 vim.keymap.set(
   'n',
   '<leader>m',

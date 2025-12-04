@@ -38,7 +38,7 @@ T.setup = function()
 
   vim.keymap.set(
     'n',
-    "<leader>'/",
+    "<leader>'<Tab>",
     ':b#<cr>',
     { desc = 'BufMark: Goto alternate buffer' }
   )
