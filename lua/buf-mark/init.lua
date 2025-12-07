@@ -215,7 +215,7 @@ T.setup = function(opts)
   require('buf-mark.user_commands').setup()
 
   -- status
-  require('buf-mark.status').setup()
+  require('buf-mark.status').setup(opts.status)
 
   -- default keymaps
   if opts.keymaps ~= false then

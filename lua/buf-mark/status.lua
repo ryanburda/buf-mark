@@ -9,6 +9,12 @@ local M = {}
 
 Info = ''
 
+-- Default configuration
+local config = {
+  hl_current = 'StatusLine',
+  hl_non_current = 'StatusLineNC',
+}
+
 local function update()
   local s = ''
 
@@ -38,10 +44,10 @@ local function update()
       local buf_name = vim.api.nvim_buf_get_name(bufnr)
       if mark.path == buf_name then
         if mark.path == current_buf_name then
-          s = s .. '%#TabLineSel#'
+          s = s .. '%#' .. config.hl_current .. '#'
           current_buf_is_marked = true
         else
-          s = s .. '%#TabLine#'
+          s = s .. '%#' .. config.hl_non_current .. '#'
         end
         s = s .. ' ' .. mark.char .. ' '
       end
@@ -50,13 +56,16 @@ local function update()
 
   -- Show current buffer if not already shown
   if not current_buf_is_marked then
-    s = s .. '%#TabLineSel#  '
+    s = s .. '%#' .. config.hl_current .. '#  '
   end
 
   Info = s .. '%*'
 end
 
-function M.setup()
+function M.setup(opts)
+  -- Merge user options with defaults
+  config = vim.tbl_extend('force', config, opts or {})
+
   -- Listen for specific events to know when to update.
   vim.api.nvim_create_autocmd('User', {
     pattern = 'BufMarkChanged',

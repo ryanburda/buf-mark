@@ -100,6 +100,24 @@ require("buf-mark").setup({
   -- Marks will be saved per working directory
   -- (e.g., marks in ~/project-a are separate from ~/project-b)
   persist = true,
+  -- Customize status highlight groups
+  status = {
+    hl_current = 'StatusLine',       -- Highlight group for current buffer's mark
+    hl_non_current = 'StatusLineNC', -- Highlight group for non-current buffers' marks
+  }
+})
+```
+
+#### Status Highlight Groups
+
+By default, the status module uses `StatusLine` for the current buffer's mark and `StatusLineNC` for marks of non-current buffers. You can customize these highlight groups to match your colorscheme or statusline configuration:
+
+```lua
+require("buf-mark").setup({
+  status = {
+    hl_current = 'TabLineSel',      -- Use TabLineSel for current buffer's mark
+    hl_non_current = 'TabLine',     -- Use TabLine for non-current buffers' marks
+  }
 })
 ```
 
@@ -168,12 +186,19 @@ Initialize the plugin with optional configuration.
 - `opts` (table, optional): Configuration options
   - `keymaps` (boolean): Enable/disable default keymaps (default: `true`)
   - `persist` (boolean): Enable mark persistence between sessions, saved per working directory (default: `true`)
+  - `status` (table, optional): Status module configuration
+    - `hl_current` (string): Highlight group for current buffer's mark (default: `'StatusLine'`)
+    - `hl_non_current` (string): Highlight group for non-current buffers' marks (default: `'StatusLineNC'`)
 
 **Example:**
 ```lua
 require("buf-mark").setup({
   keymaps = true,
   persist = true,
+  status = {
+    hl_current = 'TabLineSel',
+    hl_non_current = 'TabLine',
+  }
 })
 ```
 
