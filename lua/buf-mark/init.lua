@@ -136,7 +136,9 @@ T.goto = function(char)
     vim.api.nvim_set_current_buf(bufnr)
   else
     -- Otherwise, open the file in a new buffer
-    vim.cmd('edit ' .. vim.fn.fnameescape(path))
+    -- Use relative path if file is within current working directory
+    local relative_path = vim.fn.fnamemodify(path, ':.')
+    vim.cmd('edit ' .. vim.fn.fnameescape(relative_path))
   end
 end
 
